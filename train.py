@@ -16,7 +16,7 @@ parser.add_argument('--cache', default=True, type=boolean_string,
 opt = parser.parse_args()
 
 m = initialization(conf, train=opt.cache)[0]
-
+# djtmemduc
 print("Training STAR")
 m.fit()
 print("Training COMPLETE")
