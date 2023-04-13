@@ -1,6 +1,6 @@
 conf = {
-    "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+    "WORK_PATH": "E:\\Learn\\NCKH\\GaitSet\\work",
+    "CUDA_VISIBLE_DEVICES": "0",
     "data": {
         'dataset_path': "E:\\Learn\\NCKH\\GaitSet\\output",
         'resolution': '64',
@@ -20,7 +20,7 @@ conf = {
         'restore_iter': 0,
         'total_iter': 80000,
         'margin': 0.2,
-        'num_workers': 3,
+        'num_workers': 4,
         'frame_num': 30,
         'model_name': 'GaitSet',
     },

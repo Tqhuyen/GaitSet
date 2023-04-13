@@ -248,7 +248,7 @@ class Model:
             view_list += view
             seq_type_list += seq_type
             label_list += label
-
+        print("shape: ",len(feature_list))
         return np.concatenate(feature_list, 0), view_list, seq_type_list, label_list
 
     def save(self):
@@ -267,6 +267,12 @@ class Model:
         self.encoder.load_state_dict(torch.load(osp.join(
             'checkpoint', self.model_name,
             '{}-{:0>5}-encoder.ptm'.format(self.save_name, restore_iter))))
+        # self.encoder.load_state_dict(torch.load(osp.join(
+        #     'checkpoint', self.model_name,
+        #     '{}-{:0>5}-encoder.ptm'.format(1, restore_iter))))
+        # self.optimizer.load_state_dict(torch.load(osp.join(
+        #     'checkpoint', self.model_name,
+        #     '{}-{:0>5}-optimizer.ptm'.format(self.save_name, restore_iter))))
         self.optimizer.load_state_dict(torch.load(osp.join(
             'checkpoint', self.model_name,
             '{}-{:0>5}-optimizer.ptm'.format(self.save_name, restore_iter))))

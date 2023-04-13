@@ -17,6 +17,6 @@ opt = parser.parse_args()
 
 m = initialization(conf, train=opt.cache)[0]
 
-print("Training START")
+print("Training STAR")
 m.fit()
 print("Training COMPLETE")

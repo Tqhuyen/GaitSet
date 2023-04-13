@@ -38,10 +38,16 @@ def load_data(dataset_path, resolution, dataset, pid_num, pid_shuffle, cache=Tru
         pid_list = [pid_list[0:pid_num], pid_list[pid_num:]]
         os.makedirs('partition', exist_ok=True)
         np.save(pid_fname, pid_list)
-
-    pid_list = np.load(pid_fname)
+    print(pid_fname)
+    pid_list = np.load(pid_fname, allow_pickle=True)
     train_list = pid_list[0]
     test_list = pid_list[1]
+
+    print("#########")
+    print(train_list)
+    print(test_list)
+    print("######")
+
     train_source = DataSet(
         [seq_dir[i] for i, l in enumerate(label) if l in train_list],
         [label[i] for i, l in enumerate(label) if l in train_list],
