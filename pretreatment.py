@@ -4,6 +4,7 @@
 
 import os
 from scipy import misc as scisc
+import imageio
 import cv2
 import numpy as np
 from warnings import warn
@@ -132,7 +133,7 @@ def cut_pickle(seq_info, pid):
         if img is not None:
             # Save the cut img
             save_path = os.path.join(out_dir, _frame_name)
-            scisc.imsave(save_path, img)
+            imageio.imsave(save_path, img)
             count_frame += 1
     # Warn if the sequence contains less than 5 frames
     if count_frame < 5:
@@ -145,51 +146,54 @@ def cut_pickle(seq_info, pid):
               'Contain %d valid frames. Saved to %s.'
               % (count_frame, out_dir))
 
+def main():
+    pool = Pool(WORKERS)
+    results = list()
+    pid = 0
 
-pool = Pool(WORKERS)
-results = list()
-pid = 0
+    print('Pretreatment Start.\n'
+        'Input path: %s\n'
+        'Output path: %s\n'
+        'Log file: %s\n'
+        'Worker num: %d' % (
+            INPUT_PATH, OUTPUT_PATH, LOG_PATH, WORKERS))
 
-print('Pretreatment Start.\n'
-      'Input path: %s\n'
-      'Output path: %s\n'
-      'Log file: %s\n'
-      'Worker num: %d' % (
-          INPUT_PATH, OUTPUT_PATH, LOG_PATH, WORKERS))
+    id_list = os.listdir(INPUT_PATH)
+    id_list.sort()
+    print("id_list: ",id_list)
+    # Walk the input path
+    for _id in id_list:
+        seq_type = os.listdir(os.path.join(INPUT_PATH, _id))
+        seq_type.sort()
+        for _seq_type in seq_type:
+            view = os.listdir(os.path.join(INPUT_PATH, _id, _seq_type))
+            view.sort()
+            for _view in view:
+                seq_info = [_id, _seq_type, _view]
+                out_dir = os.path.join(OUTPUT_PATH, *seq_info)
+                os.makedirs(out_dir)
+                results.append(
+                    pool.apply_async(
+                        cut_pickle,
+                        args=(seq_info, pid)))
+                sleep(0.02)
+                pid += 1
 
-id_list = os.listdir(INPUT_PATH)
-id_list.sort()
-# Walk the input path
-for _id in id_list:
-    seq_type = os.listdir(os.path.join(INPUT_PATH, _id))
-    seq_type.sort()
-    for _seq_type in seq_type:
-        view = os.listdir(os.path.join(INPUT_PATH, _id, _seq_type))
-        view.sort()
-        for _view in view:
-            seq_info = [_id, _seq_type, _view]
-            out_dir = os.path.join(OUTPUT_PATH, *seq_info)
-            os.makedirs(out_dir)
-            results.append(
-                pool.apply_async(
-                    cut_pickle,
-                    args=(seq_info, pid)))
-            sleep(0.02)
-            pid += 1
-
-pool.close()
-unfinish = 1
-while unfinish > 0:
-    unfinish = 0
-    for i, res in enumerate(results):
-        try:
-            res.get(timeout=0.1)
-        except Exception as e:
-            if type(e) == MP_TimeoutError:
-                unfinish += 1
-                continue
-            else:
-                print('\n\n\nERROR OCCUR: PID ##%d##, ERRORTYPE: %s\n\n\n',
-                      i, type(e))
-                raise e
-pool.join()
+    pool.close()
+    unfinish = 1
+    while unfinish > 0:
+        unfinish = 0
+        for i, res in enumerate(results):
+            try:
+                res.get(timeout=0.1)
+            except Exception as e:
+                if type(e) == MP_TimeoutError:
+                    unfinish += 1
+                    continue
+                else:
+                    print('\n\n\nERROR OCCUR: PID ##%d##, ERRORTYPE: %s\n\n\n',
+                        i, type(e))
+                    raise e
+    pool.join()
+if __name__ == '__main__':
+    main()

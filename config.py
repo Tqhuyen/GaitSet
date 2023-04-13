@@ -2,7 +2,7 @@ conf = {
     "WORK_PATH": "./work",
     "CUDA_VISIBLE_DEVICES": "0,1,2,3",
     "data": {
-        'dataset_path': "your_dataset_path",
+        'dataset_path': "E:\\Learn\\NCKH\\GaitSet\\output",
         'resolution': '64',
         'dataset': 'CASIA-B',
         # In CASIA-B, data of subject #5 is incomplete.
